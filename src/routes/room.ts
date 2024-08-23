@@ -98,7 +98,7 @@ const deleteRoom = async (req: Request, res: Response) => {
 
 
 const getRoom = async (req: Request, res: Response) => {
-    const { id } = await req.params
+    const { id } = req.params
     const room = await prisma.room.findUnique({
         where: {
             id
