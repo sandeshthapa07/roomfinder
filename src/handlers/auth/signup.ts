@@ -81,7 +81,7 @@ export const login = async (req: Request, res: Response) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      domain: '.onrender.com', // Adjust this to match your backend domain
+      domain: 'roomfinder-hrx5.onrender.com', // Adjust this to match your backend domain
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     })
     .json({ status: "Logged in successfully.", accessToken, refreshToken });
@@ -170,7 +170,7 @@ export const refreshToken = async (req: Request, res: Response) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
-    domain: '.onrender.com', // Adjust this to match your backend domain
+    domain: 'roomfinder-hrx5.onrender.com', // Adjust this to match your backend domain
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   };
 
