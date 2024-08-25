@@ -11,7 +11,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://sandeshthapa07.github.io/refreshfront/",
+    origin: "https://sandeshthapa07.github.io",
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
