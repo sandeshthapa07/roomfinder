@@ -58,8 +58,8 @@ export const login = async (req: Request, res: Response) => {
     return notFound;
   }
 
-  const accessToken = createJWT(user, "15m");
-  const refreshToken = createJWT(user, "15d");
+  const accessToken = createJWT(user, "1m");
+  const refreshToken = createJWT(user, "15m");
 
   await prisma.user.update({
     where: {
@@ -77,7 +77,13 @@ export const login = async (req: Request, res: Response) => {
 
   return res
     .status(200)
-    .cookie("refreshToken", refreshToken, httpOnlyCookieOptions)
+    .cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      domain: '.onrender.com', // Adjust this to match your backend domain
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    })
     .json({ status: "Logged in successfully.", accessToken, refreshToken });
 };
 
@@ -113,6 +119,7 @@ export const comparePassword = (password: string, hashPassword: string) => {
 };
 
 export const refreshToken = async (req: Request, res: Response) => {
+  // biome-ignore lint/complexity/useLiteralKeys: <explanation>
   const incommingRefreshToken = req.cookies["refreshToken"] as string;
   console.log(incommingRefreshToken, "incommingRefreshToken");
 
@@ -133,7 +140,9 @@ export const refreshToken = async (req: Request, res: Response) => {
     },
   });
 
+
   if (!user) {
+
     return res
       .status(401)
       .json({ msg: "Please login to access this resource" });
@@ -144,17 +153,36 @@ export const refreshToken = async (req: Request, res: Response) => {
       .json({ msg: "Please login to access this resource" });
   }
 
-  const accessToken = createJWT(user, "15m");
-  const refreshToken = createJWT(user, "15d");
+
+  const accessToken = createJWT(user, "1m");
+  const refreshToken = createJWT(user, "15m");
+
+  await prisma.user.update({
+    where: {
+      id: user?.id,
+    },
+    data: {
+      refreshToken,
+    },
+  });
 
   const httpOnlyCookieOptions = {
     httpOnly: true,
     secure: true,
+    sameSite: "none",
+    domain: '.onrender.com', // Adjust this to match your backend domain
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
   };
 
   return res
     .status(200)
-    .cookie("refreshToken", refreshToken, httpOnlyCookieOptions)
+    .cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      domain: '.onrender.com', // Adjust this to match your backend domain
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    })
     .json({
       accessToken,
       refreshToken,
